@@ -1,0 +1,12 @@
+@import url('./fonts.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /*@apply bg-background text-foreground font-sans leading-tight;*/
+    @apply bg-background text-foreground font-sans;
+  }
+}

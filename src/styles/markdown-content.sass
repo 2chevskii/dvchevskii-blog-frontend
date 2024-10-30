@@ -1,0 +1,65 @@
+.markdown
+  h1
+    @apply text-3xl font-bold
+
+  h2
+    @apply text-2xl font-bold
+
+  h3
+    @apply text-xl font-bold
+
+  h4
+    @apply text-lg font-bold
+
+  h5
+    @apply font-bold text-muted-foreground
+
+  h6
+    @apply text-sm font-bold text-muted-foreground
+
+  h1,h2,h3,h4,h5,h6, pre
+    @apply my-4
+
+  hr
+    @apply border-muted-foreground/20 my-2 mx-4
+
+  ul
+    @apply list-outside list-disc pl-6
+    ul
+      list-style-type: circle
+
+      ul
+        list-style-type: square
+
+  ol
+    @apply list-outside list-decimal pl-6
+    li::marker
+      @apply text-green-200
+
+  ul
+    li::marker
+      @apply text-gray-300
+
+  ul
+    li:has(input[type=checkbox])
+      list-style-type: none
+
+  p > code
+    @apply bg-muted text-muted-foreground p-1 rounded
+
+  pre.shiki.vitesse-dark
+    @apply bg-muted p-2 rounded-lg !important
+
+  a
+    @apply underline decoration-dotted text-green-400
+    &:hover
+      @apply text-green-300
+
+  td, th
+    @apply border border-muted p-2 text-center
+
+  thead
+    @apply bg-card text-card-foreground
+
+  tr:nth-child(even)
+    @apply bg-card
