@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import {useApiClient} from "../../../api";
 import {reactive} from "vue";
+import {useAuthStore} from "../../../stores/auth.ts";
 
-const userList = reactive<Record<string, any>[]>([])
+const authStore = useAuthStore();
+
+const userList = reactive<Record<string, any>[]>([]);
 
 const apiClient = useApiClient();
 
 apiClient.admin.users.getAll().then(res => {
   userList.length = 0;
-  userList.push(...res)
-})
+  userList.push(...res);
+
+  const thisUser = userList.find(x => x.id === authStore.user.userId);
+  thisUser!.isCurrentUser = true;
+});
 </script>
 
 <template>
@@ -27,9 +33,12 @@ apiClient.admin.users.getAll().then(res => {
       </tr>
       </thead>
       <tbody>
-      <tr v-for="user in userList" :key="user.id">
+      <tr v-for="user in userList" :key="user.id" :data-is-current-user="user.isCurrentUser">
         <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
+        <td>
+          {{ user.username }}
+          <span v-if="user.isCurrentUser" class="text-muted-foreground"> (You)</span>
+        </td>
         <td>{{ user.primaryEmail }}</td>
         <td>{{ user.auditInfo.createdAtUtc }}</td>
         <td>

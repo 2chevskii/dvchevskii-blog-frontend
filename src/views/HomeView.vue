@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue'
-import {codeToHtml} from 'shiki'
+import {computed, ref} from 'vue';
+import {codeToHtml} from 'shiki';
 
-const targetText = `public static class Dvchevskii {
+const targetText = `public static partial class Dvchevskii {
     public const string Name = "Roman";
     public const int Age = 24;
     public const string Role = "Developer";
     public const string Occupation = "Skillaz";
 
-    public void Work() {}
-}`
+    public static partial void Work(WorkTask[] tasks, IDE ide, WebBrowser browser);
 
-const displayText = ref('')
-const highlightedCode = ref('')
+    public static string GetNotice() {
+      return @"
+        This blog is under construction.
+        Basically, only the core mechanisms are in place,
+        I am still in active search of inspiration for features and
+        aesthetics, so many things will change along the way =)
+      ";
+    }
+}`;
+
+const displayText = ref('');
+const highlightedCode = ref('');
 
 let currentCharPos = 0;
 
@@ -20,14 +29,14 @@ let interval = setInterval(() => {
   displayText.value += targetText[currentCharPos++];
 
   if (currentCharPos >= targetText.length) {
-    clearInterval(interval)
+    clearInterval(interval);
   }
 
   codeToHtml(displayText.value, {
     theme: 'dark-plus',
     lang: 'csharp',
-  }).then(html => highlightedCode.value = html)
-}, 60)
+  }).then(html => highlightedCode.value = html);
+}, 20);
 
 
 </script>

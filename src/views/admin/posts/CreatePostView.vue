@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-import {MdEditor} from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
+import {ref} from 'vue';
+import {MdEditor} from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 import type {AxiosError} from "axios";
-import {apiClient} from '../../../api'
+import {useApiClient, apiClient as legacyApiClient} from '../../../api';
 import {PostDto} from "../../../api/content/posts/PostDto.ts";
 
-const editorContent = ref('# New post')
-const title = ref('New post')
-const tagline = ref('')
-const isDraft = ref(true)
-const headerImageId = ref(null)
+const apiClient = useApiClient();
 
-async function uploadImage(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await apiClient.post('/images', formData)
-  headerImageId.value = response.data.id
-  console.log('Image uploaded', response.data)
+const editorContent = ref('# New post');
+const title = ref('New post');
+const tagline = ref('');
+const isDraft = ref(true);
+const headerImageId = ref<number | null>(null);
+
+async function uploadImage(file: File) {
+  const imageDto = await apiClient.images.upload(file);
+  headerImageId.value = imageDto.id;
+  console.log('Image uploaded', imageDto);
 }
 
 async function onCreatePostClick() {
@@ -28,14 +28,25 @@ async function onCreatePostClick() {
       isDraft: isDraft.value,
       body: editorContent.value,
       headerImageId: headerImageId.value,
-    }
-    const response = await apiClient.post('/posts', postDto)
-    console.log('Create post returned:', response.data)
+    };
+    const response = await legacyApiClient.post('/posts', postDto);
+    console.log('Create post returned:', response.data);
   } catch (e: AxiosError) {
-    console.error(e)
+    console.error(e);
   }
 }
 
+const onUploadImg = async (files: File[], callback: (urls: string[]) => void) => {
+  const urls = [] as string[];
+
+  for (const file of files) {
+    const imageDto = await apiClient.images.upload(file);
+    const url = import.meta.env.VITE_API_BASE_URL + '/images/' + imageDto.id;
+    urls.push(url);
+  }
+
+  console.log('Callback return', callback(urls));
+};
 
 </script>
 
@@ -61,11 +72,11 @@ async function onCreatePostClick() {
 
       <label for="">
         <span>Header image (image id: {{ headerImageId }})</span>
-        <input type="file" @change="async e => await uploadImage(e.target.files[0])">
+        <input type="file" @change="async e => await uploadImage((e.target as HTMLInputElement).files![0])">
       </label>
     </div>
 
-    <MdEditor v-model="editorContent" theme="dark" language="en"/>
+    <MdEditor v-model="editorContent" theme="dark" language="en" @onUploadImg="onUploadImg"/>
 
     <button @click="onCreatePostClick" class="p-2 rounded bg-primary mt-2">Create post</button>
   </div>

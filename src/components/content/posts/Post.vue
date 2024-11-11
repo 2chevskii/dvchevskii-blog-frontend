@@ -30,9 +30,13 @@ const postBody = await marked.parse(postData.body)
 <template>
   <div class="py-6 px-10">
     <h1 class="text-4xl">{{ postData.title }}</h1>
-    <hr class="my-4 border-muted-foreground/30 border-2">
+    <hr class="my-4 border-neutral-700">
     <h2 v-if="postData.tagline" class="text-xl text-muted-foreground mb-4">{{ postData.tagline }}</h2>
     <div class="markdown" v-html="postBody">
+    </div>
+
+    <div class="mt-20 border-t border-neutral-700 pt-12">
+      Comments container
     </div>
   </div>
 </template>
